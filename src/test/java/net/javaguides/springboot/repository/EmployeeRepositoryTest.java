@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
 @DataJpaTest
 public class EmployeeRepositoryTest {
@@ -132,8 +133,9 @@ public class EmployeeRepositoryTest {
             assertThat(updatetEmployee.getEmail()).isEqualTo("yasinkhorasani@yahoo.com");
             assertThat(updatetEmployee.getFirstName()).isEqualTo("Yas");
         }
-
+    ////////////////////////////////////////////////////////////////
         // Junit test for delete employee operation
+    @DisplayName("Junit test for delete employee operation")
             @Test
             public void givenDeleteEmployeeObject_whenDelete_thenRemoveEmployeeObject(){
 
@@ -146,7 +148,34 @@ public class EmployeeRepositoryTest {
                 employeeRepository.save(employee);
 
                 //when - action or the behavior that we are going test
-                employeeRepository.delete(employee);
+               // employeeRepository.delete(employee);
+                employeeRepository.deleteById(employee.getId());
+                Optional<Employee> employeeOptional = employeeRepository.findById(employee.getId());
+
                 //then verify the Object
+                assertThat(employeeOptional).isEmpty();
             }
+
+            ////////////////////////////////////////////////////////
+    // Junit test for custom query using JPQL with index
+        @DisplayName("Junit test for custom query using JPQL with index")
+        @Test
+        public void givenFirstnameUndLastname_whenFindByJql_thenReturnEmployeeObject(){
+
+            //given
+            Employee employee = Employee.builder()
+                    .firstName("Yasin")
+                    .lastName("Khorasani")
+                    .email("yasinkhorasani0@gmail.com")
+                    .build();
+            employeeRepository.save(employee);
+            String firsName= "Yasin";
+            String lastName= "Khorasani";
+
+            //when - action or the behavior that we are going test
+            Employee savedEmployee =employeeRepository.findByJPQL(firsName,lastName);
+
+            //then verify the Object
+            assertThat(savedEmployee).isNotNull();
+        }
 }
