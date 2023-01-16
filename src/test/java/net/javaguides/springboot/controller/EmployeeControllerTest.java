@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.javaguides.springboot.model.Employee;
 import net.javaguides.springboot.service.EmployeeService;
 import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -15,6 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -53,6 +57,28 @@ public class EmployeeControllerTest {
                 CoreMatchers.is(employee.getLastName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email",
                 CoreMatchers.is(employee.getEmail())));
-
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // Junit test for get All Employees REST API
+    @DisplayName("Junit test for get All Employees REST API")
+        @Test
+        public void givenListOfEmployee_whenGetAllEmployees_thenReturnEmployeeList() throws Exception{
+
+        //given
+        List<Employee> listOfEmoloyees = new ArrayList<>();
+        listOfEmoloyees.add(Employee.builder().firstName("Yasin").lastName("Khorasani").email("yasinkhorasani@yahoo.com").build());
+        listOfEmoloyees.add(Employee.builder().firstName("Hasti").lastName("Ahoei").email("hastiahoei@yahoo.com").build());
+        BDDMockito.given(employeeService.getAllEmployees()).willReturn(listOfEmoloyees);
+
+        //when - action or the behavior that we are going test
+        ResultActions response = mockMvc.perform(get("/api/employees"));
+
+        //then verify the Object
+        response.andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.size()",
+                        CoreMatchers.is(listOfEmoloyees.size())));
+
+        }
 }
