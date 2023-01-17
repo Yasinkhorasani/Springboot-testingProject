@@ -1,5 +1,6 @@
 package net.javaguides.springboot.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.javaguides.springboot.model.Employee;
 import net.javaguides.springboot.service.EmployeeService;
@@ -131,6 +132,74 @@ public class EmployeeControllerTest {
         //then verify the Object
         response.andExpect(status().isNotFound())
                 .andDo(print());
-
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Junit test for update employee REST API -positive scenario
+        @DisplayName("Junit test for update employee REST API -positive scenario")
+        @Test
+        public void givenUpdateEmployee_whenUpdateEmployee_thenReturnUpdateEmployeeObject() throws Exception {
+
+            //given
+            long employeeId = 1L;
+            Employee savedemployee = Employee.builder()
+                    .firstName("Yasin")
+                    .lastName("Khorasani")
+                    .email("yasinkhorsani@yahoo.com")
+                    .build();
+            Employee updatedemployee = Employee.builder()
+                    .firstName("Yas")
+                    .lastName("Ahoei")
+                    .email("yasinkhorsani0@gmail.com")
+                    .build();
+            given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.of(savedemployee));
+            given(employeeService.saveEmployee(any(Employee.class)))
+                    .willAnswer((invocation)-> invocation.getArgument(0));
+
+            //when - action or the behavior that we are going test
+            ResultActions response = mockMvc.perform(put("/api/employees/{id}",employeeId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(updatedemployee)));
+
+            //then verify the Object
+            response.andExpect(status().isOk())
+                    .andDo(print())
+                    .andExpect(jsonPath("$.firstName",is(updatedemployee.getFirstName())))
+                    .andExpect(jsonPath("$.lastName",is(updatedemployee.getLastName())))
+                    .andExpect(jsonPath("$.email",is(updatedemployee.getEmail())));
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////
+        // Junit test for update employee REST API -negative scenario
+        @DisplayName("Junit test for update employee REST API -negative scenario")
+        @Test
+        public void givenUpdateEmployee_whenUpdateEmployee_thenReturn404() throws Exception {
+
+            //given
+            long employeeId = 1L;
+            Employee savedemployee = Employee.builder()
+                    .firstName("Yasin")
+                    .lastName("Khorasani")
+                    .email("yasinkhorsani@yahoo.com")
+                    .build();
+            Employee updatedemployee = Employee.builder()
+                    .firstName("Yas")
+                    .lastName("Ahoei")
+                    .email("yasinkhorsani0@gmail.com")
+                    .build();
+            given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.empty());
+            given(employeeService.saveEmployee(any(Employee.class)))
+                    .willAnswer((invocation)-> invocation.getArgument(0));
+
+            //when - action or the behavior that we are going test
+            ResultActions response = mockMvc.perform(put("/api/employees/{id}",employeeId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(updatedemployee)));
+
+            //then verify the Object
+            response.andExpect(status().isNotFound())
+                    .andDo(print());
+
+        }
+
 }
