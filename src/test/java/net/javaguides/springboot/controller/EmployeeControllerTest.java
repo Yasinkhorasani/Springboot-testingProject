@@ -199,7 +199,24 @@ public class EmployeeControllerTest {
             //then verify the Object
             response.andExpect(status().isNotFound())
                     .andDo(print());
+        }
 
+        ////////////////////////////////////////////////////////////////////////////////
+    // Junit test for delete Employee REST API
+        @DisplayName("Junit test for delete Employee REST API")
+        @Test
+        public void givenEmployeeId_whenDeleteEmployee_thenReturn200() throws Exception {
+
+            //given
+            Long employeeId = 1L;
+            willDoNothing().given(employeeService).deleteEmployee(employeeId);
+
+            //when - action or the behavior that we are going test
+            ResultActions response = mockMvc.perform(delete("/api/employees/{id}",employeeId));
+
+            //then verify the Object
+            response.andExpect(status().isOk())
+                    .andDo(print());
         }
 
 }
