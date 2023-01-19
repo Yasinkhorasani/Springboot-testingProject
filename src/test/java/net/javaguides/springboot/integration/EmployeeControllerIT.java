@@ -29,9 +29,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@Testcontainers
-public class EmployeeControllerIT {
-    @Container
+// @Testcontainers
+public class EmployeeControllerIT extends AbstractionBaseTest {
+
+   /* @Container
     private static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest")
             .withUsername("username")
             .withPassword("password")
@@ -41,9 +42,8 @@ public class EmployeeControllerIT {
         registry.add("spring.datasource.url",mySQLContainer::getJdbcUrl);
         registry.add("spring.datasource.username", mySQLContainer::getUsername);
         registry.add("spring.datasource.password", mySQLContainer::getPassword);
-
     }
-
+    */
     // injecting Mockmvc class to make HTTP request using perform() method
     @Autowired
     private MockMvc mockMvc;
@@ -63,11 +63,11 @@ public class EmployeeControllerIT {
     @Test
     public void givenEmployeeObject_whenCreateEmployee_thenReturnSaveEmployee() throws Exception{
 
-        System.out.println(mySQLContainer.getUsername());
+    /*    System.out.println(mySQLContainer.getUsername());
         System.out.println(mySQLContainer.getPassword());
         System.out.println(mySQLContainer.getDatabaseName());
         System.out.println(mySQLContainer.getJdbcUrl());
-
+    */
         //given setup
         Employee employee = Employee.builder()
                 .firstName("Yasin")
