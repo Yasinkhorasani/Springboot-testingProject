@@ -20,6 +20,7 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -207,5 +208,26 @@ public class EmployeeControllerITest {
                 .andDo(print());
     }
 
-    /////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    // Junit test for delete Employee REST API
+    @DisplayName("Junit test for delete Employee REST API")
+    @Test
+    public void givenEmployeeId_whenDeleteEmployee_thenReturn200() throws Exception {
+
+        //given precondition or setup
+        Employee savedemployee = Employee.builder()
+                .firstName("Yasin")
+                .lastName("Khorasani")
+                .email("yasinkhorsani@yahoo.com")
+                .build();
+        employeeRepository.save(savedemployee);
+
+        //when - action or the behavior that we are going test
+        ResultActions response = mockMvc.perform(delete("/api/employees/{id}",savedemployee.getId()));
+
+        //then verify the Object
+        response.andExpect(status().isOk())
+                .andDo(print());
+    }
+
 }
